@@ -10,3 +10,4 @@ Currently, two official plugins are available:
 # Exercises
 
 ### 2.6: The Phonebook Step1
+### 2.7: The Phonebook Step2

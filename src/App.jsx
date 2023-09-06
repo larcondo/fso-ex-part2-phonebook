@@ -12,6 +12,9 @@ function App() {
 
   const onSubmit = (event) => {
     event.preventDefault()
+    if (persons.some( entry => entry.name === newName ))
+      return alert(`${newName} is already added to phonebook`)
+
     setPersons([...persons, {name: newName}])
     setNewName('')
   }
