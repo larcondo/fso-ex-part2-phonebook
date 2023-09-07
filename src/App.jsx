@@ -10,7 +10,7 @@ function App() {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
-  const [message, setMessage] = useState(null)
+  const [notification, setNotification] = useState({ message: null, errorStyle: false })
 
   useEffect(() => {
     refreshPersons()
@@ -22,6 +22,11 @@ function App() {
       .then( initialPersons => setPersons(initialPersons))
   }
 
+  const clearInputs = () => {
+    setNewName('')
+    setNewNumber('')
+  }
+
   const handleName = (event) => {
     setNewName(event.target.value)
   }
@@ -30,37 +35,54 @@ function App() {
     setNewNumber(event.target.value)
   }
 
+  const addEntry = () => {
+    const newPerson = {
+      name: newName,
+      number: newNumber,
+      id: Math.floor(Math.random() * 10000)
+    }
+
+    personService
+      .add(newPerson)
+      .then( returnedPerson => {
+        setPersons([...persons, returnedPerson])
+        setNotification({ errorStyle: false, message: `Added ${returnedPerson.name}` })
+        setTimeout(() => setNotification({ errorStyle: false, message: null }), 2000)
+        clearInputs()
+      })
+  }
+
+  const updateEntry = (personObj) => {
+    personService
+      .update(personObj.id, { ...personObj, number: newNumber })
+      .then( updatedPerson => {
+        setPersons(persons.filter( p => p.id !== personObj.id).concat(updatedPerson))
+        setNotification({ errorStyle: false, message: `Updated ${updatedPerson.name}` })
+        setTimeout(() => {
+          setNotification({ errorStyle: false, message: null })
+        }, 2000)
+        clearInputs()
+      })
+      .catch( error => {
+        setNotification({ 
+          errorStyle: true, 
+          message: `Information of ${personObj.name} has already been removed from server` 
+        })
+        setTimeout(() => {
+          setNotification({ errorStyle: false, message: null })
+        }, 3000)
+        setPersons(persons.filter( p => p.id !== personObj.id ))
+      })
+  }
+
   const onSubmit = (event) => {
     event.preventDefault()
     const personToUpdate = persons.find( p => p.name === newName )
     if (personToUpdate) {
       if (!window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) return
-      personService
-        .update(personToUpdate.id, { ...personToUpdate, number: newNumber })
-        .then( updatedPerson => {
-          setPersons(persons.filter( p => p.id !== personToUpdate.id).concat(updatedPerson))
-          setNewName('')
-          setNewNumber('')
-          setMessage(`Updated ${updatedPerson.name}`)
-          setTimeout(() => setMessage(null), 2000)
-        })
-
+      updateEntry(personToUpdate)
     } else {
-      const newPerson = {
-        name: newName,
-        number: newNumber,
-        id: Math.floor(Math.random() * 10000)
-      }
-  
-      personService
-        .add(newPerson)
-        .then( returnedPerson => {
-          setPersons([...persons, returnedPerson])
-          setNewName('')
-          setNewNumber('')
-          setMessage(`Added ${returnedPerson.name}`)
-          setTimeout(() => setMessage(null), 2000)
-        })
+      addEntry()
     }
   }
 
@@ -71,7 +93,7 @@ function App() {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={message} />
+      <Notification notification={notification} />
 
       <Filter filter={filter} handleFilter={handleFilter} />
       
