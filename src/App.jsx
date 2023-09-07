@@ -11,10 +11,14 @@ function App() {
   const [filter, setFilter] = useState('')
 
   useEffect(() => {
+    refreshPersons()
+  }, [])
+
+  const refreshPersons = () => {
     personService
       .getAll()
       .then( initialPersons => setPersons(initialPersons))
-  }, [])
+  }
 
   const handleName = (event) => {
     setNewName(event.target.value)
@@ -63,7 +67,7 @@ function App() {
       />
 
       <h2>Numbers</h2>
-      <Persons persons={persons} filter={filter} />
+      <Persons persons={persons} filter={filter} refresh={refreshPersons} />
     </div>
   )
 }

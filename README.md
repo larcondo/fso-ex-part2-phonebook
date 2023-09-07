@@ -15,3 +15,6 @@ Currently, two official plugins are available:
 ### 2.9: The Phonebook Step3
 ### 2.10: The Phonebook Step3
 ### 2.11: The Phonebook Step3
+### 2.12: The Phonebook Step3
+### 2.13: The Phonebook Step3
+### 2.14: The Phonebook Step3
