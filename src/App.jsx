@@ -29,7 +29,8 @@ function App() {
 
     setPersons([...persons, {
       name: newName,
-      number: newNumber
+      number: newNumber,
+      id: persons.id + 1
     }])
     setNewName('')
     setNewNumber('')
