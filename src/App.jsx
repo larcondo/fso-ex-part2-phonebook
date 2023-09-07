@@ -30,22 +30,32 @@ function App() {
 
   const onSubmit = (event) => {
     event.preventDefault()
-    if (persons.some( entry => entry.name === newName ))
-      return alert(`${newName} is already added to phonebook`)
+    const personToUpdate = persons.find( p => p.name === newName )
+    if (personToUpdate) {
+      if (!window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) return
+      personService
+        .update(personToUpdate.id, { ...personToUpdate, number: newNumber })
+        .then( updatedPerson => {
+          setPersons(persons.filter( p => p.id !== personToUpdate.id).concat(updatedPerson))
+          setNewName('')
+          setNewNumber('')
+        })
 
-    const newPerson = {
-      name: newName,
-      number: newNumber,
-      id: persons.length + 1
+    } else {
+      const newPerson = {
+        name: newName,
+        number: newNumber,
+        id: Math.floor(Math.random() * 10000)
+      }
+  
+      personService
+        .add(newPerson)
+        .then( returnedPerson => {
+          setPersons([...persons, returnedPerson])
+          setNewName('')
+          setNewNumber('')
+        })
     }
-
-    personService
-      .add(newPerson)
-      .then( returnedPerson => {
-        setPersons([...persons, returnedPerson])
-        setNewName('')
-        setNewNumber('')
-      })
   }
 
   const handleFilter = (event) => {

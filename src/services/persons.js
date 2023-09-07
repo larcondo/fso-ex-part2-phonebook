@@ -11,6 +11,11 @@ const add = async (newPerson) => {
   return request.then( response => response.data )
 }
 
+const update = async (id, newPerson) => {
+  const request = axios.put(`${baseUrl}/${id}`, newPerson)
+  return request.then( response => response.data )
+}
+
 const deletePerson = async (id) => {
   const request = axios.delete(`${baseUrl}/${id}`)
   return request.then( response => response )
@@ -19,5 +24,6 @@ const deletePerson = async (id) => {
 export default {
   getAll,
   add,
+  update,
   deletePerson
 }
