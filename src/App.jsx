@@ -28,13 +28,18 @@ function App() {
     if (persons.some( entry => entry.name === newName ))
       return alert(`${newName} is already added to phonebook`)
 
-    setPersons([...persons, {
+    const newPerson = {
       name: newName,
       number: newNumber,
       id: persons.length + 1
-    }])
-    setNewName('')
-    setNewNumber('')
+    }
+
+    axios.post(`${baseUrl}/persons`, newPerson)
+      .then( response => {
+        setPersons([...persons, response.data])
+        setNewName('')
+        setNewNumber('')
+      })
   }
 
   const handleFilter = (event) => {
